@@ -8,6 +8,8 @@ This dashboard uses data sourced from Te Papa. More information is available her
 
 More information about the data is available at this tidytuesday repo: https://github.com/rfordatascience/tidytuesday/tree/main/data/2026/2026-04-14.
 
+The dashboard is currently hosted on Streamlit Community Cloud here: https://seabird-dashboard.streamlit.app/. 
+
 ## Data
 
 The original data comes from the tidytuesday repository.
