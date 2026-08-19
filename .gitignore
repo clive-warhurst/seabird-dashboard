@@ -1,0 +1,21 @@
+# ignore all python caches and Jupyter notebook checkpoints
+__pycache__/
+.ipynb_checkpoints/
+
+# ignore all VS Code settings
+.vscode/
+
+# ignore streamlit developer files
+.streamlit/
+
+# ignore data files except for ships_cleaned
+data/*
+!data/ships_cleaned.parquet
+
+# ignore the junkyard and a few files in scripts
+junkyard/
+scripts/charts.py
+scripts/cleaning.py
+
+# finally, exclude the data exploration Jupyter notebook
+02_data_exploration.ipynb
