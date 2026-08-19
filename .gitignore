@@ -10,7 +10,7 @@ __pycache__/
 
 # ignore data files except for ships_cleaned
 data/*
-!data/ships_cleaned.parquet
+!data/birds_ships_joined.parquet
 
 # ignore the junkyard and a few files in scripts
 junkyard/
