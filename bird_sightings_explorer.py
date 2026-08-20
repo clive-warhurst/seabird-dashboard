@@ -78,7 +78,9 @@ st.subheader("Species Group Summary")
 st.write("")
 st.write("Select a species group below to see data relating to that species group.")
 st.write("")
-species_group_options = ["All"] + sorted(birds_ships_joined["species_group"].unique())
+
+species_group_sorted_list = sorted(birds_ships_joined["species_group"].unique())
+species_group_options = ["All"] + species_group_sorted_list
 selected_species_group = st.selectbox("Species Group Selector", species_group_options, width=250)
 st.write("")
 
@@ -118,6 +120,7 @@ fig = px.scatter_map(
     lon="longitude",
     color = "species_group",
     color_discrete_map=color_map,
+    category_orders ={"species_group": species_group_sorted_list},
     hover_data=["date", "species_common_name", "count"],
     zoom=3,
     height=450, 
