@@ -66,6 +66,7 @@ with col2:
         x="year",
         y="sightings",
         color="season",
+        stack=False,
         x_label = "Year",
         y_label = "Number of Sightings",
         height = 450,
