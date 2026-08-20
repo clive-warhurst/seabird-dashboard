@@ -74,8 +74,10 @@ with col2:
 # create the selectbox and plot the map
 st.subheader("Species Group Summary")
 st.write("")
+st.write("Select a species group below to see data relating to that species group.")
+st.write("")
 species_group_options = ["All"] + sorted(birds_ships_joined["species_group"].unique())
-selected_species_group = st.selectbox("Species group", species_group_options, width=250)
+selected_species_group = st.selectbox("Species Group Selector", species_group_options, width=250)
 st.write("")
 
 # create filters depending on what was selected!
