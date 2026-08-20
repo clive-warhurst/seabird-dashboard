@@ -10,6 +10,13 @@ activity_cols = [
     "following_ship"
     ]
 
+season_order = [
+    "spring",
+    "summer",
+    "autumn",
+    "winter"
+]
+
 # define function to perform additional cleaning
 # takes two dfs (birds and ships) as inputs
 # returns four dfs as outputs for charting
@@ -47,10 +54,13 @@ def seabird_chart_data(birds_ships):
 
     # 2) create year_season_count
 
-    # now use groupby to get a count of the sightings per group
+    # firstly, ensure that season is a categorical series and sort
+    birds_ships["season"] = pd.Categorical(birds_ships["season"], categories=season_order, ordered=True)
+
+    # now use groupby to get a count of the sightings per group, allowing groups with 0 sightings to be shown as well
     year_season_count = (
         birds_ships
-        .groupby(["year", "season"])
+        .groupby(["year", "season"], observed=False)
         .size()
         .reset_index(name="sightings")
     )
