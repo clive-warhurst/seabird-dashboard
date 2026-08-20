@@ -88,4 +88,14 @@ def birds_ships_join(birds, ships):
 def seabird_streamlit_setup():
 
     birds_ships_joined = pd.read_parquet("data/birds_ships_joined.parquet")
+
+    # capitalise the strings here for presentational purposes
+
+    # for each column in the dataframe ...
+    for col in birds_ships_joined.columns:
+        # if that column's data type is a string ...
+        if birds_ships_joined[col].dtype == "str":
+            # capitalise the words in that column
+            birds_ships_joined[col] = birds_ships_joined[col].str.title()
+
     return birds_ships_joined

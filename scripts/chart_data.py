@@ -11,10 +11,10 @@ activity_cols = [
     ]
 
 season_order = [
-    "spring",
-    "summer",
-    "autumn",
-    "winter"
+    "Spring",
+    "Summer",
+    "Autumn",
+    "Winter"
 ]
 
 # define function to perform additional cleaning
@@ -35,7 +35,7 @@ def seabird_chart_data(birds_ships):
     # then get the proportions for all birds
     # this gets a series, then converts it to a dataframe, before transposing it
     all_activity_proportion_wide = birds_ships[activity_cols].mean().to_frame().transpose()
-    all_activity_proportion_wide["species_group"] = "all"
+    all_activity_proportion_wide["species_group"] = "All"
 
     # concatenate them together, ignoring the index
     species_group_activity_proportion_wide = pd.concat(
@@ -50,6 +50,13 @@ def seabird_chart_data(birds_ships):
         value_vars = activity_cols,
         var_name = "activity", 
         value_name = "proportion"
+        )
+
+    # now capitalise the activity column values and replace "_" with " "
+    species_group_activity_proportion["activity"] = (
+        species_group_activity_proportion["activity"]
+        .str.replace("_", " ")
+        .str.title()
         )
 
     # 2) create year_season_count
@@ -82,7 +89,7 @@ def seabird_chart_data(birds_ships):
         .reset_index(name="proportion")
     )
 
-    all_season_proportion["species_group"] = "all"
+    all_season_proportion["species_group"] = "All"
 
     # concatenate the two datasets together
     species_group_season_proportion = pd.concat(

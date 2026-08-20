@@ -74,19 +74,19 @@ with col2:
 # create the selectbox and plot the map
 st.subheader("Species Group Summary")
 st.write("")
-species_group_options = ["all"] + sorted(birds_ships_joined["species_group"].unique())
+species_group_options = ["All"] + sorted(birds_ships_joined["species_group"].unique())
 selected_species_group = st.selectbox("Species group", species_group_options, width=250)
 st.write("")
 
 # create filters depending on what was selected!
-if selected_species_group == "all":
+if selected_species_group == "All":
     species_group_select_filter = birds_ships_joined
-    mean_species_group_filter = species_group_activity_proportion[species_group_activity_proportion["species_group"] == "all"]
-    species_group_seasonal_sightings_filter = species_group_season_proportion[species_group_season_proportion["species_group"] == "all"]
+    mean_species_group_filter = species_group_activity_proportion[species_group_activity_proportion["species_group"] == "All"]
+    species_group_seasonal_sightings_filter = species_group_season_proportion[species_group_season_proportion["species_group"] == "All"]
 else:
     species_group_select_filter = birds_ships_joined[birds_ships_joined["species_group"] == selected_species_group]
-    mean_species_group_filter = species_group_activity_proportion[(species_group_activity_proportion["species_group"] == selected_species_group) | (species_group_activity_proportion["species_group"] == "all")]
-    species_group_seasonal_sightings_filter = species_group_season_proportion[(species_group_season_proportion["species_group"] == selected_species_group) | (species_group_season_proportion["species_group"] == "all")]
+    mean_species_group_filter = species_group_activity_proportion[(species_group_activity_proportion["species_group"] == selected_species_group) | (species_group_activity_proportion["species_group"] == "All")]
+    species_group_seasonal_sightings_filter = species_group_season_proportion[(species_group_season_proportion["species_group"] == selected_species_group) | (species_group_season_proportion["species_group"] == "All")]
 
 with st.container(horizontal=True, width="content", gap="large"):
     st.metric(
