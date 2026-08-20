@@ -4,6 +4,7 @@ import plotly.express as px
 
 from scripts.chart_data import seabird_chart_data
 from scripts.seabird_setup import seabird_streamlit_setup
+from scripts.chart_functions import format_percent
 
 # import data 
 birds_ships_joined = seabird_streamlit_setup()
@@ -94,7 +95,7 @@ with st.container(horizontal=True, width="content", gap="large"):
     st.metric(
         label=f"{selected_species_group} Sightings", 
         value=len(species_group_select_filter.index),
-        delta=f"{len(species_group_select_filter) / len(birds_ships_joined):.1%} of total",
+        delta=f"{format_percent(len(species_group_select_filter) / len(birds_ships_joined), 1)} of total",
         delta_arrow="off",
         delta_color ="blue"
         )
