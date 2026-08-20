@@ -131,7 +131,8 @@ col1, col2 = st.columns([2,5], gap="large", border = True)
 
 with col1:
     # now create the bar chart for the selected species group
-    st.subheader("Activities")
+    st.subheader("Bird Behaviours")
+    st.caption("Proportion of sightings with observed bird behaviour")
     st.bar_chart(
         mean_species_group_filter,
         x="activity",
@@ -139,7 +140,7 @@ with col1:
         color="species_group",
         stack=False,
         horizontal=True,
-        x_label = "Activity",
+        x_label = "Bird Behaviour",
         y_label = "Proportion of Sightings",
         height = 450,
         width = 450
