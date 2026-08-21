@@ -1,6 +1,7 @@
 # import packages and functions
 import streamlit as st
 import plotly.express as px
+import altair as alt
 
 from scripts.chart_data import seabird_chart_data
 from scripts.seabird_setup import seabird_streamlit_setup
@@ -10,11 +11,21 @@ from scripts.chart_functions import format_percent
 birds_ships_joined = seabird_streamlit_setup()
 
 # run the additional cleaning function to create datasets needed for charting
-(species_group_activity_proportion,
-    year_season_count,
-    species_group_season_proportion,
+(
+    #h3_birds_ships,
+    species_group_activity_percent,
+    year_season_count_filled,
+    species_group_season_percent,
     species_group_count
 ) = seabird_chart_data(birds_ships_joined)
+
+# setup season_order
+season_order = [
+    "Spring",
+    "Summer",
+    "Autumn",
+    "Winter"
+]
 
 # set the page config - adds a page title, cute page icon and a page title
 st.set_page_config(
@@ -43,35 +54,49 @@ st.write("")
 # create some columns for the 1st row of charts
 col1, col2 = st.columns([2,5], gap="large", border=True)
 
- # create the bar chart for overall Species Group sightings
-with col1:
-    st.subheader("Species Groups")
-    st.bar_chart(
-        species_group_count, 
-        x="species_group", 
-        y="sightings",
-        horizontal=True,
-        x_label = "Species Group",
-        y_label = "Number of Sightings",
-        height= 450,
-        width = "stretch",
-        sort = "-sightings"
+# create the bar chart for overall Species Group sightings
+# create an altair chart for this using the method-based syntax
+
+chart_1 = (
+    alt.Chart(species_group_count)
+    .mark_bar()
+    .encode(
+        alt.X("sightings:Q").title("Number of Sightings"),
+        alt.Y("species_group:N").sort("-x").title("Species Group"),
+        tooltip=[
+            alt.Tooltip("species_group:N").title("Species Group"),
+            alt.Tooltip("sightings:Q").title("Number of Sightings").format(",")
+        ]
     )
+    .properties(height=450)
+)
+
+with col1:
+    st.subheader("Sightings by Species Groups")
+    st.altair_chart(chart_1, use_container_width=True)
 
 # create a bar chart of the sightings by year by season
+chart_2 = (
+    alt.Chart(year_season_count_filled)
+    .mark_bar()
+    .encode(
+        alt.X("year:O").title("Year").axis(labelAngle=0),
+        alt.Y("sightings:Q").title("Number of Sightings"),
+        alt.XOffset("season:O").sort(season_order),
+        alt.Color("season:O").sort(season_order).legend(orient="bottom").title("Season"),
+        tooltip=[
+            alt.Tooltip("year:O").title("Year"),
+            alt.Tooltip("season:O").title("Season"),
+            alt.Tooltip("sightings:Q").title("Number of Sightings").format(",")
+        ]
+    )
+    .properties(height=450)
+)
+
+
 with col2:
     st.subheader("Sightings over Time")
-    st.bar_chart(
-        year_season_count,
-        x="year",
-        y="sightings",
-        color="season",
-        stack=False,
-        x_label = "Year",
-        y_label = "Number of Sightings",
-        height = 450,
-        width = "stretch",
-    )
+    st.altair_chart(chart_2)
 
 # create the selectbox and plot the map
 st.subheader("Species Group Summary")
@@ -87,12 +112,12 @@ st.write("")
 # create filters depending on what was selected!
 if selected_species_group == "All":
     species_group_select_filter = birds_ships_joined
-    mean_species_group_filter = species_group_activity_proportion[species_group_activity_proportion["species_group"] == "All"]
-    species_group_seasonal_sightings_filter = species_group_season_proportion[species_group_season_proportion["species_group"] == "All"]
+    mean_species_group_filter = species_group_activity_percent[species_group_activity_percent["species_group"] == "All"]
+    species_group_seasonal_sightings_filter = species_group_season_percent[species_group_season_percent["species_group"] == "All"]
 else:
     species_group_select_filter = birds_ships_joined[birds_ships_joined["species_group"] == selected_species_group]
-    mean_species_group_filter = species_group_activity_proportion[(species_group_activity_proportion["species_group"] == selected_species_group) | (species_group_activity_proportion["species_group"] == "All")]
-    species_group_seasonal_sightings_filter = species_group_season_proportion[(species_group_season_proportion["species_group"] == selected_species_group) | (species_group_season_proportion["species_group"] == "All")]
+    mean_species_group_filter = species_group_activity_percent[(species_group_activity_percent["species_group"] == selected_species_group) | (species_group_activity_percent["species_group"] == "All")]
+    species_group_seasonal_sightings_filter = species_group_season_percent[(species_group_season_percent["species_group"] == selected_species_group) | (species_group_season_percent["species_group"] == "All")]
 
 with st.container(horizontal=True, width="content", gap="large"):
     st.metric(
@@ -136,33 +161,47 @@ col1, col2 = st.columns([2,5], gap="large", border = True)
 with col1:
     # now create the bar chart for the selected species group
     st.subheader("Bird Behaviours")
-    st.caption("Proportion of sightings with observed bird behaviour")
-    st.bar_chart(
-        mean_species_group_filter,
-        x="activity",
-        y="proportion",
-        color="species_group",
-        stack=False,
-        horizontal=True,
-        x_label = "Bird Behaviour",
-        y_label = "Proportion of Sightings",
-        height = 450,
-        width = 450
+
+    chart_3 = (
+        alt.Chart(mean_species_group_filter)
+        .mark_bar()
+        .encode(
+            alt.X("percentage:Q").title("Percentage"),
+            alt.Y("activity:N").title("Bird Behaviour"),
+            alt.YOffset("species_group:N").sort(species_group_options),
+            alt.Color("species_group:N").sort(species_group_options).title("Species Group").legend(orient="bottom"),
+            tooltip=[
+                alt.Tooltip("species_group:N").title("Species Group"),
+                alt.Tooltip("activity:N").title("Bird Behaviour"),
+                alt.Tooltip("percentage:Q").title("Percentage")
+            ]
+        )
+        .properties(height=450)
     )
+    st.caption("Proportion of sightings with observed bird behaviour")
+    st.altair_chart(chart_3)
 
     # and now add in the chart of species group by season
     st.subheader("Sightings by Season")
-    st.bar_chart(
-        species_group_seasonal_sightings_filter,
-        x="season",
-        y="proportion",
-        color="species_group",
-        stack=False,
-        x_label = "Season",
-        y_label = "Proportion of Sightings",
-        height = 450,
-        width = 450
+
+    chart_4 = (
+        alt.Chart(species_group_seasonal_sightings_filter)
+        .mark_bar()
+        .encode(
+            alt.X("season:O").sort(season_order).title("Season").axis(labelAngle=0),
+            alt.Y("percentage:Q").title("Percentage"),
+            alt.XOffset("species_group:N").sort(species_group_options),
+            alt.Color("species_group:N").sort(species_group_options).title("Species Group").legend(orient="bottom"),
+            tooltip=[
+                alt.Tooltip("species_group:N").title("Species Group"),
+                alt.Tooltip("season:O").title("Season"),
+                alt.Tooltip("percentage:Q").title("Percentage")
+            ]
+        )
+        .properties(height=450)
     )
+
+    st.altair_chart(chart_4)
 
 with col2:
     # finally, plot the chart
